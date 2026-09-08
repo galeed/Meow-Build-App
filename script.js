@@ -167,10 +167,9 @@ document.addEventListener('DOMContentLoaded', () => {
       const buildNumber = document.getElementById('buildNumberInput')?.value || '1';
 
       const orientation = document.getElementById('orientationSelect')?.value || 'portrait';
-      const isOffline = document.getElementById('offlineSelect')?.value === 'true';
-
-
-
+      
+      // Control Modo Offline y Permisos de Red
+      const isOfflineMode = document.getElementById('offlineSelect')?.value === 'true';
 
       const isFullscreen = document.getElementById('fullscreenToggle')?.checked;
       const statusBarIcons = document.getElementById('statusBarIcons')?.value;
@@ -189,9 +188,12 @@ document.addEventListener('DOMContentLoaded', () => {
       formData.append('versionName', versionName);
       formData.append('buildNumber', buildNumber);
       formData.append('orientation', orientation);
-    
-formData.append('offlineMode', isOffline ? 'true' : 'false');
-formData.append('internetPermission', isOffline ? 'true' : 'false');
+
+      // Si el modo offline está ACTIVADO, se otorgan permisos de Internet para caché y peticiones externas.
+      formData.append('offlineMode', isOfflineMode ? 'true' : 'false');
+      formData.append('internetPermission', isOfflineMode ? 'true' : 'false');
+
+      formData.append('fullscreenMode', isFullscreen ? 'true' : 'false');
 
       // Manejo de barras según la elección de Immersive / Default
       if (isFullscreen || statusBarIcons === 'none') {
