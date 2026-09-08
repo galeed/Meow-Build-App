@@ -208,17 +208,41 @@
 </div>
 
 
-    <!-- Módulo 2: Configuración de Nombre y App ID -->
+        <!-- Módulo 02: Datos de la App y Versión -->
     <div class="cell">
-      <span class="subtext">02 // DATOS DE LA APP</span>
+      <span class="subtext">02 // DATOS Y VERSIÓN</span>
       <div>
         <label class="subtext">NOMBRE DE APP</label>
-        <input type="text" class="input-field" placeholder="Mi App Web" value="Mi App Web">
+        <input type="text" id="appNameInput" class="input-field" placeholder="Mi App Web" value="Mi App Web">
         
         <label class="subtext" style="margin-top: 10px; display: block;">PACKAGE ID</label>
-        <input type="text" class="input-field" placeholder="com.ejemplo.app" value="com.meow.app">
+        <input type="text" id="packageIdInput" class="input-field" placeholder="com.ejemplo.app" value="com.meow.app">
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 10px;">
+          <div>
+            <label class="subtext">VERSION NAME</label>
+            <input type="text" id="versionNameInput" class="input-field" placeholder="1.0.0" value="1.0.0">
+          </div>
+          <div>
+            <label class="subtext">BUILD NUMBER</label>
+            <input type="number" id="buildNumberInput" class="input-field" placeholder="1" value="1">
+          </div>
+        </div>
       </div>
     </div>
+
+    <!-- Módulo Adicional: Carga de Icono -->
+    <div class="cell">
+      <span class="subtext">02.1 // ICONO DE LA APP</span>
+      <div id="iconDropZone" style="border: 1px dashed #ffffff; padding: 15px; text-align: center; cursor: pointer; margin-top: 8px; background: #050505; height: calc(100% - 25px); display: flex; flex-direction: column; align-items: center; justify-content: center;">
+        <div id="iconPreview" style="width: 54px; height: 54px; border: 1px solid #ffffff; display: flex; align-items: center; justify-content: center; font-family: monospace; font-size: 0.65rem; color: #888888; background: #000; margin-bottom: 8px;">
+          512x512
+        </div>
+        <span class="subtext" style="font-size: 0.65rem; margin-bottom: 0;">SUBIR ICONO (.PNG)</span>
+        <input type="file" id="iconInput" accept="image/png, image/jpeg" style="display: none;">
+      </div>
+    </div>
+
 
     <!-- Módulo 3: Opciones de pantalla -->
     <div class="cell">
