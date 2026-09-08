@@ -2,8 +2,8 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>App Layout A24 Style</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>Meow Build App</title>
   <style>
     * {
       box-sizing: border-box;
@@ -11,53 +11,53 @@
       padding: 0;
     }
     body {
-      background-color: #000;
-      color: #fff;
+      background-color: #000000;
+      color: #ffffff;
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-      padding: 10px;
+      padding: 12px;
     }
 
-    /* Contenedor principal estilo Grid con bordes */
+    /* Retícula principal con bordes un poco más gruesos y definidos */
     .brutalist-grid {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
-      border: 1px solid #333;
+      border: 2px solid #ffffff; /* Grosor aumentado */
     }
 
-    /* Cada celda o bloque */
+    /* Celdas individuales */
     .cell {
-      border: 1px solid #333;
+      border: 1px solid #ffffff; /* Grosor interno equilibrado */
       padding: 16px;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
     }
 
-    /* Celda que ocupa todo el ancho */
+    /* Ocupar todo el ancho */
     .full-width {
       grid-column: span 2;
     }
 
-    /* Tipografía brutalista */
-    h1 {
-      font-size: 2.2rem;
+    /* Tipografía Brutalista */
+    .header-title {
+      font-size: 1.8rem;
       font-weight: 900;
       text-transform: uppercase;
-      letter-spacing: -1px;
+      letter-spacing: -0.5px;
     }
 
     .subtext {
-      font-size: 0.85rem;
-      color: #aaa;
+      font-size: 0.8rem;
+      color: #cccccc;
       text-transform: uppercase;
-      line-height: 1.2;
+      line-height: 1.3;
+      letter-spacing: 0.5px;
     }
 
-    /* Imágenes dentro de las celdas */
     .cell img {
       width: 100%;
       height: auto;
-      margin-top: 10px;
+      margin-top: 12px;
       display: block;
     }
   </style>
@@ -65,21 +65,20 @@
 <body>
 
   <div class="brutalist-grid">
-    <!-- Encabezado superior -->
+    <!-- Encabezado con el nombre de la app -->
     <div class="cell full-width">
-      <h1>UNIRSE AHORA &rarr;</h1>
+      <h1 class="header-title">MEOW BUILD APP &rarr;</h1>
     </div>
 
-    <!-- Bloque de contenido 1 -->
+    <!-- Bloques de contenido -->
     <div class="cell">
-      <span class="subtext">VER EXCLUSIVOS EN LA TIENDA</span>
-      <img src="https://via.placeholder.com/300x200/111/fff?text=PRODUCTO" alt="Exclusivos">
+      <span class="subtext">SECCIÓN / MÓDULO 01</span>
+      <img src="https://via.placeholder.com/300x200/111111/ffffff?text=MEOW" alt="Preview">
     </div>
 
-    <!-- Bloque de contenido 2 -->
     <div class="cell">
-      <p class="subtext" style="color: #fff; font-size: 0.95rem;">
-        La membresía te da acceso a contenido exclusivo, lanzamientos limitados y descuentos.
+      <p class="subtext" style="color: #ffffff;">
+        CONTENIDO O PANEL PRINCIPAL DE INTERACCIÓN.
       </p>
     </div>
   </div>
