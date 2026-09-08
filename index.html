@@ -247,34 +247,20 @@
 
          <div id="systemBarsContainer" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px;">
         
-        <!-- Status Bar -->
-        <div style="border: 1px solid #ffffff; padding: 10px;">
-          <span class="subtext" style="display: block; margin-bottom: 6px;">STATUS BAR COLOR</span>
-          <div style="display: flex; gap: 8px; align-items: center;">
-            <input type="color" id="statusBarColor" value="#000000" style="background: none; border: 1px solid #fff; width: 40px; height: 35px; cursor: pointer;">
-            <input type="text" id="statusBarHex" class="input-field" value="#000000" style="margin-top: 0; text-transform: uppercase;">
-          </div>
-          
-          <span class="subtext" style="display: block; margin-top: 8px; margin-bottom: 4px;">ICONOS STATUS BAR</span>
-          <select id="statusBarIcons" class="input-field">
-            <option value="light">LIGHT (ICONOS BLANCOS)</option>
-            <option value="dark">DARK (ICONOS NEGROS)</option>
-          </select>
-        </div>
+      <!-- Status Bar Icons -->
+<select id="statusBarIcons" class="input-field">
+  <option value="none">NINGUNO / DEFAULT DEL SISTEMA</option>
+  <option value="light">LIGHT (ICONOS BLANCOS)</option>
+  <option value="dark">DARK (ICONOS NEGROS)</option>
+</select>
 
-        <!-- Navigation Bar -->
-        <div style="border: 1px solid #ffffff; padding: 10px;">
-          <span class="subtext" style="display: block; margin-bottom: 6px;">NAV BAR COLOR</span>
-          <div style="display: flex; gap: 8px; align-items: center;">
-            <input type="color" id="navBarColor" value="#000000" style="background: none; border: 1px solid #fff; width: 40px; height: 35px; cursor: pointer;">
-            <input type="text" id="navBarHex" class="input-field" value="#000000" style="margin-top: 0; text-transform: uppercase;">
-          </div>
-          
-          <span class="subtext" style="display: block; margin-top: 8px; margin-bottom: 4px;">ICONOS NAV BAR</span>
-          <select id="navBarIcons" class="input-field">
-            <option value="light">LIGHT (ICONOS BLANCOS)</option>
-            <option value="dark">DARK (ICONOS GRISES/NEGROS)</option>
-          </select>
+<!-- Navigation Bar Icons -->
+<select id="navBarIcons" class="input-field">
+  <option value="none">NINGUNO / DEFAULT DEL SISTEMA</option>
+  <option value="light">LIGHT (ICONOS BLANCOS)</option>
+  <option value="dark">DARK (ICONOS GRISES/NEGROS)</option>
+</select>
+
         </div>
 
       </div>
