@@ -68,6 +68,32 @@ document.addEventListener('DOMContentLoaded', () => {
     const sizeMB = (file.size / (1024 * 1024)).toFixed(2);
     logMessage(`Archivo cargado con éxito: ${file.name} (${sizeMB} MB)`, 'system');
   }
+  
+    // ==========================================
+  // MANEJO DE CARGA DE ICONO (.PNG)
+  // ==========================================
+  const iconDropZone = document.getElementById('iconDropZone');
+  const iconInput = document.getElementById('iconInput');
+  const iconPreview = document.getElementById('iconPreview');
+
+  if (iconDropZone && iconInput) {
+    iconDropZone.addEventListener('click', () => iconInput.click());
+
+    iconInput.addEventListener('change', (e) => {
+      if (e.target.files.length > 0) {
+        const file = e.target.files[0];
+        const reader = new FileReader();
+
+        reader.onload = (event) => {
+          iconPreview.innerHTML = `<img src="${event.target.result}" style="width: 100%; height: 100%; object-fit: cover;">`;
+        };
+
+        reader.readAsDataURL(file);
+        logMessage(`Icono seleccionado: ${file.name}`, 'system');
+      }
+    });
+  }
+
 
   // 2. Obtener lista de Native Plugins seleccionados (JS Bridge)
   const getSelectedPlugins = () => {
@@ -104,16 +130,37 @@ document.addEventListener('DOMContentLoaded', () => {
 
     
 
-      const appNameInput = document.querySelector('input[placeholder="Mi App Web"]');
-      const packageIdInput = document.querySelector('input[placeholder="com.ejemplo.app"]');
+            // Captura de valores de los inputs por sus IDs
+      const appName = document.getElementById('appNameInput')?.value || 'Meow App';
+      const packageId = document.getElementById('packageIdInput')?.value || 'com.meow.app';
+      const versionName = document.getElementById('versionNameInput')?.value || '1.0.0';
+      const buildNumber = document.getElementById('buildNumberInput')?.value || '1';
+      
       const orientationSelect = document.querySelectorAll('select')[0];
       const offlineSelect = document.querySelectorAll('select')[1];
-
-      const appName = appNameInput ? appNameInput.value : 'Meow App';
-      const packageId = packageIdInput ? packageIdInput.value : 'com.meow.app';
       const orientation = orientationSelect ? orientationSelect.value : 'portrait';
       const isOffline = offlineSelect ? offlineSelect.value : 'true';
       const activePlugins = getSelectedPlugins();
+
+      logMessage('Iniciando secuencia de compilación...', 'warn');
+      logMessage(`Configuración: [App: ${appName}] | [ID: ${packageId}] | [v${versionName} (${buildNumber})]`, 'system');
+      logMessage(`JS Bridge Plugins activos: ${activePlugins.join(', ') || 'Ninguno'}`, 'system');
+
+      // Preparar FormData para la petición HTTP
+      const formData = new FormData();
+      formData.append('zipFile', fileInput.files[0]);
+      formData.append('appName', appName);
+      formData.append('packageId', packageId);
+      formData.append('versionName', versionName);
+      formData.append('buildNumber', buildNumber);
+      formData.append('orientation', orientation);
+      formData.append('offlineMode', isOffline);
+      formData.append('plugins', JSON.stringify(activePlugins));
+
+      if (iconInput && iconInput.files.length > 0) {
+        formData.append('appIcon', iconInput.files[0]);
+      }
+
 
       logMessage('Iniciando secuencia de compilación...', 'warn');
       logMessage(`Configuración: [App: ${appName}] | [ID: ${packageId}] | [Orientación: ${orientation}]`, 'system');
