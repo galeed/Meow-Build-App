@@ -231,76 +231,57 @@
       </div>
     </div>
 
-    <!-- Módulo Adicional: Carga de Icono -->
+   <!-- Módulo 02.1: Carga de Icono (Corregido con Label) -->
     <div class="cell">
       <span class="subtext">02.1 // ICONO DE LA APP</span>
-      <div id="iconDropZone" style="border: 1px dashed #ffffff; padding: 15px; text-align: center; cursor: pointer; margin-top: 8px; background: #050505; height: calc(100% - 25px); display: flex; flex-direction: column; align-items: center; justify-content: center;">
-        <div id="iconPreview" style="width: 54px; height: 54px; border: 1px solid #ffffff; display: flex; align-items: center; justify-content: center; font-family: monospace; font-size: 0.65rem; color: #888888; background: #000; margin-bottom: 8px;">
+      <label for="iconInput" style="display: flex; flex-direction: column; align-items: center; justify-content: center; border: 1px dashed #ffffff; padding: 15px; text-align: center; cursor: pointer; margin-top: 8px; background: #050505; height: calc(100% - 35px); width: 100%; box-sizing: border-box;">
+        <div id="iconPreview" style="width: 54px; height: 54px; border: 1px solid #ffffff; display: flex; align-items: center; justify-content: center; font-family: monospace; font-size: 0.65rem; color: #888888; background: #000; margin-bottom: 8px; pointer-events: none;">
           512x512
         </div>
-        <span class="subtext" style="font-size: 0.65rem; margin-bottom: 0;">SUBIR ICONO (.PNG)</span>
+        <span class="subtext" style="font-size: 0.65rem; margin-bottom: 0; pointer-events: none;">SUBIR ICONO (.PNG)</span>
         <input type="file" id="iconInput" accept="image/png, image/jpeg" style="display: none;">
+      </label>
+    </div>
+    </div>
+
+
+         <div id="systemBarsContainer" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px;">
+        
+        <!-- Status Bar -->
+        <div style="border: 1px solid #ffffff; padding: 10px;">
+          <span class="subtext" style="display: block; margin-bottom: 6px;">STATUS BAR COLOR</span>
+          <div style="display: flex; gap: 8px; align-items: center;">
+            <input type="color" id="statusBarColor" value="#000000" style="background: none; border: 1px solid #fff; width: 40px; height: 35px; cursor: pointer;">
+            <input type="text" id="statusBarHex" class="input-field" value="#000000" style="margin-top: 0; text-transform: uppercase;">
+          </div>
+          
+          <span class="subtext" style="display: block; margin-top: 8px; margin-bottom: 4px;">ICONOS STATUS BAR</span>
+          <select id="statusBarIcons" class="input-field">
+            <option value="light">LIGHT (ICONOS BLANCOS)</option>
+            <option value="dark">DARK (ICONOS NEGROS)</option>
+          </select>
+        </div>
+
+        <!-- Navigation Bar -->
+        <div style="border: 1px solid #ffffff; padding: 10px;">
+          <span class="subtext" style="display: block; margin-bottom: 6px;">NAV BAR COLOR</span>
+          <div style="display: flex; gap: 8px; align-items: center;">
+            <input type="color" id="navBarColor" value="#000000" style="background: none; border: 1px solid #fff; width: 40px; height: 35px; cursor: pointer;">
+            <input type="text" id="navBarHex" class="input-field" value="#000000" style="margin-top: 0; text-transform: uppercase;">
+          </div>
+          
+          <span class="subtext" style="display: block; margin-top: 8px; margin-bottom: 4px;">ICONOS NAV BAR</span>
+          <select id="navBarIcons" class="input-field">
+            <option value="light">LIGHT (ICONOS BLANCOS)</option>
+            <option value="dark">DARK (ICONOS GRISES/NEGROS)</option>
+          </select>
+        </div>
+
       </div>
     </div>
 
 
-    <!-- Módulo 3: Opciones de pantalla -->
-    <div class="cell">
-      <span class="subtext">03 // PANTALLA</span>
-      <div>
-        <label class="subtext">ORIENTACIÓN</label>
-        <select class="input-field">
-          <option value="portrait">VERTICAL (PORTRAIT)</option>
-          <option value="landscape">HORIZONTAL (LANDSCAPE)</option>
-          <option value="auto">AUTOMÁTICO</option>
-        </select>
-
-        <label class="subtext" style="margin-top: 10px; display: block;">MODO OFFLINE</label>
-        <select class="input-field">
-          <option value="true">ACTIVADO (EMBEDDED)</option>
-          <option value="false">DESACTIVADO</option>
-        </select>
-      </div>
-    </div>
     
-    <!-- Módulo 03.1: Configuración de Barras de Sistema Android -->
-<div class="cell full-width">
-  <span class="subtext">03.1 // BARRAS DE SISTEMA (ANDROID UI)</span>
-  
-  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; margin-top: 10px;">
-    
-    <!-- Status Bar -->
-    <div style="border: 1px solid #ffffff; padding: 10px;">
-      <span class="subtext" style="display: block; margin-bottom: 6px;">STATUS BAR COLOR</span>
-      <div style="display: flex; gap: 8px; align-items: center;">
-        <input type="color" id="statusBarColor" value="#000000" style="background: none; border: 1px solid #fff; width: 40px; height: 35px; cursor: pointer;">
-        <input type="text" id="statusBarHex" class="input-field" value="#000000" style="margin-top: 0; text-transform: uppercase;">
-      </div>
-      
-      <span class="subtext" style="display: block; margin-top: 8px; margin-bottom: 4px;">ICONOS STATUS BAR</span>
-      <select id="statusBarIcons" class="input-field">
-        <option value="light">LIGHT (ICONOS BLANCOS)</option>
-        <option value="dark">DARK (ICONOS NEGROS)</option>
-      </select>
-    </div>
-
-    <!-- Navigation Bar -->
-    <div style="border: 1px solid #ffffff; padding: 10px;">
-      <span class="subtext" style="display: block; margin-bottom: 6px;">NAV BAR COLOR</span>
-      <div style="display: flex; gap: 8px; align-items: center;">
-        <input type="color" id="navBarColor" value="#000000" style="background: none; border: 1px solid #fff; width: 40px; height: 35px; cursor: pointer;">
-        <input type="text" id="navBarHex" class="input-field" value="#000000" style="margin-top: 0; text-transform: uppercase;">
-      </div>
-      
-      <span class="subtext" style="display: block; margin-top: 8px; margin-bottom: 4px;">ICONOS NAV BAR</span>
-      <select id="navBarIcons" class="input-field">
-        <option value="light">LIGHT (ICONOS BLANCOS)</option>
-        <option value="dark">DARK (ICONOS GRISES/NEGROS)</option>
-      </select>
-    </div>
-
-  </div>
-</div>
 
 
         <!-- Módulo 04: Native Plugins (JS Bridge) -->
