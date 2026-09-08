@@ -2,301 +2,320 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Meow Build App</title>
   <style>
+    /* Estilos Base Brutalistas / A24 Style */
     * {
       box-sizing: border-box;
       margin: 0;
       padding: 0;
+      -webkit-tap-highlight-color: transparent;
     }
 
     body {
       background-color: #000000;
       color: #ffffff;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      font-family: monospace, monospace;
       padding: 12px;
-      min-height: 100vh;
+      display: flex;
+      justify-content: center;
     }
 
-    /* Retícula principal con bordes firmes estilo A24 */
-    .brutalist-grid {
+    .grid-container {
+      width: 100%;
+      max-width: 600px;
       display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      border: 2px solid #ffffff;
+      grid-template-columns: 1fr 1fr;
     }
 
-    /* Celdas del Grid */
+    /* Solución de bordes dobles/encimados (1px consistente) */
     .cell {
       border: 1px solid #ffffff;
-      padding: 16px;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      position: relative;
+      padding: 12px;
+      background: #000000;
+      margin-top: -1px;
+      margin-left: -1px;
     }
 
     .full-width {
-      grid-column: span 2;
-    }
-
-    /* Top Bar Header */
-    .header-bar {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      border-bottom: 2px solid #ffffff;
-      padding-bottom: 8px;
-      margin-bottom: 12px;
-    }
-
-    .header-title {
-      font-size: 1.6rem;
-      font-weight: 900;
-      text-transform: uppercase;
-      letter-spacing: -0.5px;
-    }
-
-    .tag-status {
-      font-size: 0.75rem;
-      border: 1px solid #ffffff;
-      padding: 4px 8px;
-      font-family: monospace;
-      text-transform: uppercase;
+      grid-column: 1 / -1;
     }
 
     .subtext {
-      font-size: 0.75rem;
-      color: #cccccc;
+      display: block;
+      font-size: 0.65rem;
+      letter-spacing: 1px;
+      color: #888888;
       text-transform: uppercase;
-      line-height: 1.3;
-      letter-spacing: 0.5px;
       margin-bottom: 8px;
     }
 
-    /* Estilo para los Inputs y Formulario */
+    .header-title {
+      font-family: monospace;
+      font-weight: bold;
+      letter-spacing: -0.5px;
+    }
+
+    /* Campos de Texto y Selectores corregidos para iOS */
     .input-field {
-      background: transparent;
+      width: 100%;
+      background: #000000;
       border: 1px solid #ffffff;
       color: #ffffff;
       padding: 10px;
       font-family: monospace;
-      font-size: 0.85rem;
-      width: 100%;
-      margin-top: 6px;
+      font-size: 0.8rem;
+      border-radius: 0;
+      -webkit-appearance: none;
+      appearance: none;
       outline: none;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      overflow: hidden;
+      margin-top: 4px;
     }
 
     .input-field:focus {
       background: #111111;
     }
 
-    /* Zona de arrastrar y soltar ZIP */
-    .drop-zone {
-      border: 2px dashed #ffffff;
-      padding: 30px 16px;
-      text-align: center;
-      cursor: pointer;
-      transition: all 0.2s ease;
-      background: #050505;
-      margin-top: 10px;
-    }
-
-    .drop-zone:hover, .drop-zone.active {
-      background: #ffffff;
-      color: #000000;
-    }
-
-    .drop-zone:hover .subtext, .drop-zone.active .subtext {
-      color: #000000;
-    }
-
-    /* Botón Brutalista interactivo */
+    /* Botón Brutalista Principal */
     .btn-brutalist {
+      width: 100%;
       background: #ffffff;
       color: #000000;
       border: 1px solid #ffffff;
       padding: 14px;
-      font-weight: 900;
-      font-size: 1rem;
-      text-transform: uppercase;
+      font-family: monospace;
+      font-weight: bold;
+      font-size: 0.85rem;
       cursor: pointer;
-      width: 100%;
+      border-radius: 0;
+      -webkit-appearance: none;
+      text-transform: uppercase;
       margin-top: 12px;
-      letter-spacing: 1px;
-      transition: all 0.15s ease;
+      transition: background 0.15s ease;
     }
 
-    .btn-brutalist:active, .btn-brutalist:hover {
+    .btn-brutalist:active {
+      background: #cccccc;
+    }
+
+    /* Checkboxes con Efecto Invertido */
+    .plugin-label {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-family: monospace;
+      font-size: 0.75rem;
+      border: 1px solid #ffffff;
+      padding: 10px;
+      cursor: pointer;
+      user-select: none;
+      transition: all 0.15s ease;
       background: #000000;
       color: #ffffff;
     }
 
-    /* Consola de logs */
+    .plugin-label:has(input:checked) {
+      background-color: #ffffff;
+      color: #000000;
+      font-weight: bold;
+    }
+
+    .plugin-label input[type="checkbox"] {
+      display: none;
+    }
+
+    /* Consola Terminal */
     .console-logs {
-      font-family: monospace;
-      font-size: 0.75rem;
-      color: #00ff66;
-      background: #080808;
-      border: 1px solid #ffffff;
+      background: #050505;
+      border: 1px solid #333333;
       padding: 10px;
-      height: 90px;
-      overflow-y: auto;
-      margin-top: 8px;
-    }
-
-    /* Footer con información de versión */
-    .footer-cell {
       font-size: 0.7rem;
-      color: #888888;
-      font-family: monospace;
-      text-transform: uppercase;
-      display: flex;
-      justify-content: space-between;
+      height: 110px;
+      overflow-y: auto;
+      line-height: 1.4;
+      color: #00ff66;
     }
-    
-    /* Checkboxes estilo interfaz retro-industrial */
-.plugin-label {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-family: monospace;
-  font-size: 0.75rem;
-  border: 1px solid #ffffff;
-  padding: 10px;
-  cursor: pointer;
-  user-select: none;
-  transition: all 0.15s ease;
-}
 
-.plugin-label:has(input:checked) {
-  background-color: #ffffff;
-  color: #000000;
-  font-weight: bold;
-}
+    /* Dropzone ZIP */
+    .drop-zone {
+      border: 1px dashed #ffffff;
+      padding: 20px;
+      text-align: center;
+      cursor: pointer;
+      background: #050505;
+    }
 
-.plugin-label input[type="checkbox"] {
-  display: none; /* Oculta el checkbox nativo para usar la celda completa */
-}
-
+    .drop-zone.active {
+      background: #151515;
+    }
   </style>
 </head>
 <body>
 
-  <!-- Encabezado Superior -->
-  <div class="header-bar">
-    <div class="header-title">MEOW BUILD APP</div>
-    <div class="tag-status">ONLINE / NO-ADS</div>
-  </div>
+  <div class="grid-container">
 
-  <!-- Retícula de Módulos -->
-  <div class="brutalist-grid">
-    
-    <!-- Módulo 1: Cargar ZIP -->
-    <!-- Encabezado con más carácter -->
-<div class="cell full-width" style="background: #050505;">
-  <div style="display: flex; justify-content: space-between; align-items: flex-start;">
-    <div>
-      <span class="subtext" style="color: #666; font-size: 0.65rem;">SYSTEM // PACKAGER CORE</span>
-      <h1 class="header-title" style="font-size: 2.2rem; margin-top: 4px;">MEOW BUILD App ⚯</h1>
+    <!-- Encabezado -->
+    <div class="cell full-width" style="background: #050505;">
+      <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+        <div>
+          <span class="subtext" style="color: #666; font-size: 0.65rem;">SYSTEM // PACKAGER CORE</span>
+          <h1 class="header-title" style="font-size: 1.8rem; margin-top: 2px;">MEOW BUILD ⚯</h1>
+        </div>
+        <span class="subtext" style="border: 1px solid #fff; padding: 2px 6px; color: #fff; font-weight: bold;">v1.0.0</span>
+      </div>
+      <p class="subtext" style="margin-top: 10px; color: #aaa; text-transform: none; font-size: 0.75rem; margin-bottom: 0;">
+        Empaquetador web a binarios nativos para Android. Entorno aislado, sin rastreadores y libre de anuncios.
+      </p>
     </div>
-    <span class="tag-status" style="background: #fff; color: #000; font-weight: bold;">v1.0.0</span>
-  </div>
-  <p class="subtext" style="margin-top: 12px; color: #aaa; text-transform: none; font-size: 0.8rem;">
-    Empaquetador web a binarios nativos para Android. Entorno aislado, sin rastreadores y libre de anuncios.
-  </p>
-</div>
 
+    <!-- Módulo 01: Proyecto Fuente ZIP -->
+    <div class="cell full-width">
+      <span class="subtext">01 // PROYECTO FUENTE (.ZIP)</span>
+      <div class="drop-zone" id="dropZone">
+        <strong style="font-size: 0.8rem; display: block;">ARRASTRA TU ARCHIVO .ZIP AQUÍ</strong>
+        <span style="font-size: 0.65rem; color: #888;">HTML, CSS, JS Y ASSETS INCLUIDOS</span>
+        <input type="file" id="fileInput" accept=".zip" style="display: none;">
+      </div>
+    </div>
 
-        <!-- Módulo 02: Datos de la App y Versión -->
+    <!-- Módulo 02: Datos de la App -->
     <div class="cell">
       <span class="subtext">02 // DATOS Y VERSIÓN</span>
       <div>
         <label class="subtext">NOMBRE DE APP</label>
         <input type="text" id="appNameInput" class="input-field" placeholder="Mi App Web" value="Mi App Web">
         
-        <label class="subtext" style="margin-top: 10px; display: block;">PACKAGE ID</label>
+        <label class="subtext" style="margin-top: 8px; display: block;">PACKAGE ID</label>
         <input type="text" id="packageIdInput" class="input-field" placeholder="com.ejemplo.app" value="com.meow.app">
 
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 10px;">
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-top: 8px;">
           <div>
-            <label class="subtext">VERSION NAME</label>
+            <label class="subtext">VERSION</label>
             <input type="text" id="versionNameInput" class="input-field" placeholder="1.0.0" value="1.0.0">
           </div>
           <div>
-            <label class="subtext">BUILD NUMBER</label>
+            <label class="subtext">BUILD</label>
             <input type="number" id="buildNumberInput" class="input-field" placeholder="1" value="1">
           </div>
         </div>
       </div>
     </div>
 
-   <!-- Módulo 02.1: Carga de Icono (Corregido con Label) -->
+    <!-- Módulo 02.1: Carga de Icono (Con Label Directo) -->
     <div class="cell">
       <span class="subtext">02.1 // ICONO DE LA APP</span>
-      <label for="iconInput" style="display: flex; flex-direction: column; align-items: center; justify-content: center; border: 1px dashed #ffffff; padding: 15px; text-align: center; cursor: pointer; margin-top: 8px; background: #050505; height: calc(100% - 35px); width: 100%; box-sizing: border-box;">
-        <div id="iconPreview" style="width: 54px; height: 54px; border: 1px solid #ffffff; display: flex; align-items: center; justify-content: center; font-family: monospace; font-size: 0.65rem; color: #888888; background: #000; margin-bottom: 8px; pointer-events: none;">
+      <label for="iconInput" style="display: flex; flex-direction: column; align-items: center; justify-content: center; border: 1px dashed #ffffff; padding: 10px; text-align: center; cursor: pointer; background: #050505; height: calc(100% - 25px); width: 100%; box-sizing: border-box;">
+        <div id="iconPreview" style="width: 48px; height: 48px; border: 1px solid #ffffff; display: flex; align-items: center; justify-content: center; font-family: monospace; font-size: 0.6rem; color: #888888; background: #000; margin-bottom: 6px; pointer-events: none;">
           512x512
         </div>
-        <span class="subtext" style="font-size: 0.65rem; margin-bottom: 0; pointer-events: none;">SUBIR ICONO (.PNG)</span>
+        <span class="subtext" style="font-size: 0.6rem; margin-bottom: 0; pointer-events: none;">SUBIR ICONO (.PNG)</span>
         <input type="file" id="iconInput" accept="image/png, image/jpeg" style="display: none;">
       </label>
     </div>
+
+    <!-- Módulo 03: Configuración de Pantalla -->
+    <div class="cell full-width">
+      <span class="subtext">03 // PANTALLA</span>
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+        <div>
+          <span class="subtext">ORIENTACIÓN</span>
+          <select id="orientationSelect" class="input-field">
+            <option value="portrait">VERTICAL (PORTRAIT)</option>
+            <option value="landscape">HORIZONTAL (LANDSCAPE)</option>
+          </select>
+        </div>
+        <div>
+          <span class="subtext">MODO OFFLINE</span>
+          <select id="offlineSelect" class="input-field">
+            <option value="true">ACTIVADO (EMBED)</option>
+            <option value="false">DESACTIVADO (REMOTE)</option>
+          </select>
+        </div>
+      </div>
     </div>
 
+    <!-- Módulo 03.1: Barras de Sistema (Android UI) -->
+    <div class="cell full-width">
+      <span class="subtext">03.1 // BARRAS DE SISTEMA (ANDROID UI)</span>
+      
+      <div style="margin-bottom: 10px;">
+        <label class="plugin-label" style="display: flex; align-items: center; gap: 8px;">
+          <input type="checkbox" id="fullscreenToggle">
+          PANTALLA COMPLETA (OCULTAR BARRAS / IMMERSIVE MODE)
+        </label>
+      </div>
 
-         <div id="systemBarsContainer" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px;">
+      <div id="systemBarsContainer" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px; transition: opacity 0.2s ease;">
         
-      <!-- Status Bar Icons -->
-<select id="statusBarIcons" class="input-field">
-  <option value="none">NINGUNO / DEFAULT DEL SISTEMA</option>
-  <option value="light">LIGHT (ICONOS BLANCOS)</option>
-  <option value="dark">DARK (ICONOS NEGROS)</option>
-</select>
+        <!-- Status Bar -->
+        <div style="border: 1px solid #ffffff; padding: 8px;">
+          <span class="subtext" style="display: block; margin-bottom: 4px;">STATUS BAR COLOR</span>
+          <div style="display: flex; gap: 6px; align-items: center;">
+            <input type="color" id="statusBarColor" value="#000000" style="background: none; border: 1px solid #fff; width: 35px; height: 32px; cursor: pointer;">
+            <input type="text" id="statusBarHex" class="input-field" value="#000000" style="margin-top: 0; text-transform: uppercase;">
+          </div>
+          
+          <span class="subtext" style="display: block; margin-top: 8px; margin-bottom: 4px;">ICONOS STATUS BAR</span>
+          <select id="statusBarIcons" class="input-field">
+            <option value="none">NINGUNO / DEFAULT DEL SISTEMA</option>
+            <option value="light">LIGHT (ICONOS BLANCOS)</option>
+            <option value="dark">DARK (ICONOS NEGROS)</option>
+          </select>
+        </div>
 
-<!-- Navigation Bar Icons -->
-<select id="navBarIcons" class="input-field">
-  <option value="none">NINGUNO / DEFAULT DEL SISTEMA</option>
-  <option value="light">LIGHT (ICONOS BLANCOS)</option>
-  <option value="dark">DARK (ICONOS GRISES/NEGROS)</option>
-</select>
-
+        <!-- Navigation Bar -->
+        <div style="border: 1px solid #ffffff; padding: 8px;">
+          <span class="subtext" style="display: block; margin-bottom: 4px;">NAV BAR COLOR</span>
+          <div style="display: flex; gap: 6px; align-items: center;">
+            <input type="color" id="navBarColor" value="#000000" style="background: none; border: 1px solid #fff; width: 35px; height: 32px; cursor: pointer;">
+            <input type="text" id="navBarHex" class="input-field" value="#000000" style="margin-top: 0; text-transform: uppercase;">
+          </div>
+          
+          <span class="subtext" style="display: block; margin-top: 8px; margin-bottom: 4px;">ICONOS NAV BAR</span>
+          <select id="navBarIcons" class="input-field">
+            <option value="none">NINGUNO / DEFAULT DEL SISTEMA</option>
+            <option value="light">LIGHT (ICONOS BLANCOS)</option>
+            <option value="dark">DARK (ICONOS GRISES/NEGROS)</option>
+          </select>
         </div>
 
       </div>
     </div>
 
-
-    
-
-
-        <!-- Módulo 04: Native Plugins (JS Bridge) -->
-<div class="cell full-width">
-  <span class="subtext">04 // NATIVE PLUGINS & JS BRIDGE</span>
-  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 10px; margin-top: 10px;">
-    
-    <label class="plugin-label">
-      <input type="checkbox" checked>
-      [✓] VIBRATION API
-    </label>
-
-    <label class="plugin-label">
-      <input type="checkbox" checked>
-      [✓] PERSISTENT STORAGE
-    </label>
-
-    <label class="plugin-label">
-      <input type="checkbox" checked>
-      [✓] DEVICE INFO API
-    </label>
-
-  </div>
-</div>
-
-
-    <!-- Módulo 05: Proceso de Compilación Final -->
+    <!-- Módulo 04: Native Plugins (JS Bridge) -->
     <div class="cell full-width">
-      <span class="subtext">05 // PROCESO DE COMPILACIÓN</span>
+      <span class="subtext">04 // NATIVE PLUGINS & JS BRIDGE</span>
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 8px; margin-top: 6px;">
+        
+        <label class="plugin-label">
+          <input type="checkbox" checked>
+          [✓] VIBRATION API
+        </label>
+
+        <label class="plugin-label">
+          <input type="checkbox" checked>
+          [✓] PERSISTENT STORAGE
+        </label>
+
+        <label class="plugin-label">
+          <input type="checkbox" checked>
+          [✓] DEVICE INFO API
+        </label>
+
+      </div>
+    </div>
+
+    <!-- Módulo 05: Proceso de Compilación -->
+    <div class="cell full-width">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+        <span class="subtext">05 // PROCESO DE COMPILACIÓN</span>
+        <span style="display: inline-block; width: 8px; height: 8px; background: #00ff66; border-radius: 50%; box-shadow: 0 0 8px #00ff66;"></span>
+      </div>
+      
       <div class="console-logs" id="consoleLogs">
         > Sistema listo para empaquetar.<br>
         > Esperando archivo .ZIP...
@@ -306,9 +325,6 @@
 
   </div>
 
-<script src="./script.js"></script>
-</body>
-
-
+  <script src="./script.js"></script>
 </body>
 </html>
