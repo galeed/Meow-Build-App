@@ -167,7 +167,10 @@ document.addEventListener('DOMContentLoaded', () => {
       const buildNumber = document.getElementById('buildNumberInput')?.value || '1';
 
       const orientation = document.getElementById('orientationSelect')?.value || 'portrait';
-      const isOffline = document.getElementById('offlineSelect')?.value || 'true';
+      const isOffline = document.getElementById('offlineSelect')?.value === 'true';
+
+
+
 
       const isFullscreen = document.getElementById('fullscreenToggle')?.checked;
       const statusBarIcons = document.getElementById('statusBarIcons')?.value;
@@ -186,8 +189,9 @@ document.addEventListener('DOMContentLoaded', () => {
       formData.append('versionName', versionName);
       formData.append('buildNumber', buildNumber);
       formData.append('orientation', orientation);
-      formData.append('offlineMode', isOffline);
-      formData.append('fullscreenMode', isFullscreen ? 'true' : 'false');
+    
+formData.append('offlineMode', isOffline ? 'true' : 'false');
+formData.append('internetPermission', isOffline ? 'true' : 'false');
 
       // Manejo de barras según la elección de Immersive / Default
       if (isFullscreen || statusBarIcons === 'none') {
