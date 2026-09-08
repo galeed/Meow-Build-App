@@ -8,49 +8,10 @@ document.addEventListener('DOMContentLoaded', () => {
   const fileInput = document.getElementById('fileInput');
   const consoleLogs = document.getElementById('consoleLogs');
   const buildBtn = document.getElementById('buildBtn');
-  
-    // Lógica para Carga de Icono
+
+  // Referencias para Carga de Icono
   const iconInput = document.getElementById('iconInput');
   const iconPreview = document.getElementById('iconPreview');
-
-  if (iconInput) {
-    iconInput.addEventListener('change', (e) => {
-      if (e.target.files.length > 0) {
-        const file = e.target.files[0];
-        const reader = new FileReader();
-
-        reader.onload = (event) => {
-          if (iconPreview) {
-            iconPreview.innerHTML = `<img src="${event.target.result}" style="width: 100%; height: 100%; object-fit: cover;">`;
-          }
-        };
-
-        reader.readAsDataURL(file);
-        logMessage(`Icono cargado con éxito: ${file.name}`, 'system');
-      }
-    });
-  }
-
-  // Toggle Pantalla Completa (Ocultar / Desactivar barras)
-  const fullscreenToggle = document.getElementById('fullscreenToggle');
-  const systemBarsContainer = document.getElementById('systemBarsContainer');
-
-  if (fullscreenToggle && systemBarsContainer) {
-    fullscreenToggle.addEventListener('change', (e) => {
-      if (e.target.checked) {
-        systemBarsContainer.style.opacity = '0.3';
-        systemBarsContainer.style.pointerEvents = 'none';
-        logMessage('Modo Pantalla Completa (Immersive) activado.', 'system');
-      } else {
-        systemBarsContainer.style.opacity = '1';
-        systemBarsContainer.style.pointerEvents = 'auto';
-        logMessage('Modo Pantalla Completa desactivado. Barras personalizadas activas.', 'system');
-      }
-    });
-  }
-
-
-  
 
   // Helper para escribir en la consola terminal
   const logMessage = (message, type = 'info') => {
@@ -71,7 +32,6 @@ document.addEventListener('DOMContentLoaded', () => {
   if (dropZone && fileInput) {
     dropZone.addEventListener('click', () => fileInput.click());
 
-    // Eventos Drag & Drop
     ['dragenter', 'dragover'].forEach(eventName => {
       dropZone.addEventListener(eventName, (e) => {
         e.preventDefault();
@@ -115,12 +75,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // 2. Manejo de Carga de Icono (.PNG / .JPG)
-  if (iconDropZone && iconInput) {
-    iconDropZone.addEventListener('click', (e) => {
-      e.preventDefault();
-      iconInput.click();
-    });
-
+  if (iconInput) {
     iconInput.addEventListener('change', (e) => {
       if (e.target.files.length > 0) {
         const file = e.target.files[0];
@@ -138,7 +93,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // 3. Sincronización de Pickers de Color con Inputs Hexadecimales
+  // 3. Sincronización de Pickers de Color
   const syncColor = (pickerId, hexId) => {
     const picker = document.getElementById(pickerId);
     const hex = document.getElementById(hexId);
@@ -156,9 +111,27 @@ document.addEventListener('DOMContentLoaded', () => {
   syncColor('statusBarColor', 'statusBarHex');
   syncColor('navBarColor', 'navBarHex');
 
-  // 4. Obtener lista de Native Plugins seleccionados (JS Bridge)
+  // Toggle Pantalla Completa (Immersive)
+  const fullscreenToggle = document.getElementById('fullscreenToggle');
+  const systemBarsContainer = document.getElementById('systemBarsContainer');
+
+  if (fullscreenToggle && systemBarsContainer) {
+    fullscreenToggle.addEventListener('change', (e) => {
+      if (e.target.checked) {
+        systemBarsContainer.style.opacity = '0.3';
+        systemBarsContainer.style.pointerEvents = 'none';
+        logMessage('Modo Pantalla Completa (Immersive) activado.', 'system');
+      } else {
+        systemBarsContainer.style.opacity = '1';
+        systemBarsContainer.style.pointerEvents = 'auto';
+        logMessage('Modo Pantalla Completa desactivado. Barras personalizadas activas.', 'system');
+      }
+    });
+  }
+
+  // 4. Obtener lista de Native Plugins seleccionados
   const getSelectedPlugins = () => {
-    const pluginCheckboxes = document.querySelectorAll('input[type="checkbox"]');
+    const pluginCheckboxes = document.querySelectorAll('.cell.full-width input[type="checkbox"]:not(#fullscreenToggle)');
     const activePlugins = [];
 
     pluginCheckboxes.forEach(cb => {
@@ -175,7 +148,6 @@ document.addEventListener('DOMContentLoaded', () => {
   if (buildBtn) {
     buildBtn.addEventListener('click', async () => {
 
-      // Respuesta háptica táctil al pulsar el botón
       if (navigator.vibrate) {
         navigator.vibrate(40);
       }
@@ -185,34 +157,28 @@ document.addEventListener('DOMContentLoaded', () => {
         return;
       }
 
-      // Deshabilitar botón durante el proceso
       buildBtn.disabled = true;
       buildBtn.style.opacity = '0.5';
 
-      // Captura de valores del formulario
+      // Captura de datos
       const appName = document.getElementById('appNameInput')?.value || 'Meow App';
       const packageId = document.getElementById('packageIdInput')?.value || 'com.meow.app';
       const versionName = document.getElementById('versionNameInput')?.value || '1.0.0';
       const buildNumber = document.getElementById('buildNumberInput')?.value || '1';
 
-      const orientationSelect = document.querySelectorAll('select')[0];
-      const offlineSelect = document.querySelectorAll('select')[1];
-      const orientation = orientationSelect ? orientationSelect.value : 'portrait';
-      const isOffline = offlineSelect ? offlineSelect.value : 'true';
+      const orientation = document.getElementById('orientationSelect')?.value || 'portrait';
+      const isOffline = document.getElementById('offlineSelect')?.value || 'true';
 
-      const statusBarColor = document.getElementById('statusBarHex')?.value || '#000000';
-      const statusBarIcons = document.getElementById('statusBarIcons')?.value || 'light';
-      const navBarColor = document.getElementById('navBarHex')?.value || '#000000';
-      const navBarIcons = document.getElementById('navBarIcons')?.value || 'light';
+      const isFullscreen = document.getElementById('fullscreenToggle')?.checked;
+      const statusBarIcons = document.getElementById('statusBarIcons')?.value;
+      const navBarIcons = document.getElementById('navBarIcons')?.value;
 
       const activePlugins = getSelectedPlugins();
 
       logMessage('Iniciando secuencia de compilación...', 'warn');
       logMessage(`Configuración: [App: ${appName}] | [ID: ${packageId}] | [v${versionName} (${buildNumber})]`, 'system');
-      logMessage(`System UI: Status Bar [${statusBarColor} / ${statusBarIcons}] | Nav Bar [${navBarColor} / ${navBarIcons}]`, 'system');
-      logMessage(`JS Bridge Plugins activos: ${activePlugins.join(', ') || 'Ninguno'}`, 'system');
 
-      // Preparar FormData para la petición HTTP a la API
+      // Preparar FormData
       const formData = new FormData();
       formData.append('zipFile', fileInput.files[0]);
       formData.append('appName', appName);
@@ -221,10 +187,25 @@ document.addEventListener('DOMContentLoaded', () => {
       formData.append('buildNumber', buildNumber);
       formData.append('orientation', orientation);
       formData.append('offlineMode', isOffline);
-      formData.append('statusBarColor', statusBarColor);
-      formData.append('statusBarIcons', statusBarIcons);
-      formData.append('navBarColor', navBarColor);
-      formData.append('navBarIcons', navBarIcons);
+      formData.append('fullscreenMode', isFullscreen ? 'true' : 'false');
+
+      // Manejo de barras según la elección de Immersive / Default
+      if (isFullscreen || statusBarIcons === 'none') {
+        formData.append('statusBarColor', 'default');
+        formData.append('statusBarIcons', 'default');
+      } else {
+        formData.append('statusBarColor', document.getElementById('statusBarHex')?.value || '#000000');
+        formData.append('statusBarIcons', statusBarIcons);
+      }
+
+      if (isFullscreen || navBarIcons === 'none') {
+        formData.append('navBarColor', 'default');
+        formData.append('navBarIcons', 'default');
+      } else {
+        formData.append('navBarColor', document.getElementById('navBarHex')?.value || '#000000');
+        formData.append('navBarIcons', navBarIcons);
+      }
+
       formData.append('plugins', JSON.stringify(activePlugins));
 
       if (iconInput && iconInput.files.length > 0) {
@@ -235,9 +216,7 @@ document.addEventListener('DOMContentLoaded', () => {
         logMessage('Enviando paquete .ZIP al servidor de compilación...', 'info');
 
         /* 
-        // ==========================================
         // CONEXIÓN REAL CON LA API DE COMPILACIÓN
-        // ==========================================
         const response = await fetch('https://api.tu-servicio-empaquetador.dev/v1/build', {
           method: 'POST',
           body: formData
@@ -258,13 +237,13 @@ document.addEventListener('DOMContentLoaded', () => {
         a.remove();
         */
 
-        // Simulación de respuesta en consola para pruebas
+        // Simulación de consola
         setTimeout(() => logMessage('Descomprimiendo estructura HTML5 y assets...', 'info'), 1000);
         setTimeout(() => logMessage('Inyectando contenedor nativo Android y JS Bridge...', 'info'), 2200);
         setTimeout(() => logMessage('Configurando Status Bar y Navigation Bar...', 'info'), 3200);
         setTimeout(() => logMessage('Generando y firmando paquete APK final...', 'info'), 4200);
         setTimeout(() => {
-          logMessage('¡Proceso completado! (Conecta el endpoint de la API final para iniciar la descarga automática).', 'system');
+          logMessage('¡Proceso completado! (Conecta el endpoint final para la descarga automática).', 'system');
           buildBtn.disabled = false;
           buildBtn.style.opacity = '1';
         }, 5200);
