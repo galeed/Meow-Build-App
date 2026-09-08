@@ -9,6 +9,11 @@ document.addEventListener('DOMContentLoaded', () => {
   const consoleLogs = document.getElementById('consoleLogs');
   const buildBtn = document.getElementById('buildBtn');
 
+  // Referencias para Carga de Icono
+  const iconDropZone = document.getElementById('iconDropZone');
+  const iconInput = document.getElementById('iconInput');
+  const iconPreview = document.getElementById('iconPreview');
+
   // Helper para escribir en la consola terminal
   const logMessage = (message, type = 'info') => {
     const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
@@ -18,11 +23,13 @@ document.addEventListener('DOMContentLoaded', () => {
     if (type === 'warn')  colorStyle = 'color: #ffff00;';
     if (type === 'system') colorStyle = 'color: #ffffff;';
 
-    consoleLogs.innerHTML += `<br><span style="${colorStyle}">[${time}] > ${message}</span>`;
-    consoleLogs.scrollTop = consoleLogs.scrollHeight;
+    if (consoleLogs) {
+      consoleLogs.innerHTML += `<br><span style="${colorStyle}">[${time}] > ${message}</span>`;
+      consoleLogs.scrollTop = consoleLogs.scrollHeight;
+    }
   };
 
-  // 1. Manejo de Selección y Arrastre de Archivos (ZIP)
+  // 1. Manejo de Selección y Arrastre de Archivos (.ZIP)
   if (dropZone && fileInput) {
     dropZone.addEventListener('click', () => fileInput.click());
 
@@ -66,18 +73,15 @@ document.addEventListener('DOMContentLoaded', () => {
       dropZoneText.innerText = file.name;
     }
     const sizeMB = (file.size / (1024 * 1024)).toFixed(2);
-    logMessage(`Archivo cargado con éxito: ${file.name} (${sizeMB} MB)`, 'system');
+    logMessage(`Archivo ZIP cargado con éxito: ${file.name} (${sizeMB} MB)`, 'system');
   }
-  
-    // ==========================================
-  // MANEJO DE CARGA DE ICONO (.PNG)
-  // ==========================================
-  const iconDropZone = document.getElementById('iconDropZone');
-  const iconInput = document.getElementById('iconInput');
-  const iconPreview = document.getElementById('iconPreview');
 
+  // 2. Manejo de Carga de Icono (.PNG / .JPG)
   if (iconDropZone && iconInput) {
-    iconDropZone.addEventListener('click', () => iconInput.click());
+    iconDropZone.addEventListener('click', (e) => {
+      e.preventDefault();
+      iconInput.click();
+    });
 
     iconInput.addEventListener('change', (e) => {
       if (e.target.files.length > 0) {
@@ -85,19 +89,38 @@ document.addEventListener('DOMContentLoaded', () => {
         const reader = new FileReader();
 
         reader.onload = (event) => {
-          iconPreview.innerHTML = `<img src="${event.target.result}" style="width: 100%; height: 100%; object-fit: cover;">`;
+          if (iconPreview) {
+            iconPreview.innerHTML = `<img src="${event.target.result}" style="width: 100%; height: 100%; object-fit: cover;">`;
+          }
         };
 
         reader.readAsDataURL(file);
-        logMessage(`Icono seleccionado: ${file.name}`, 'system');
+        logMessage(`Icono cargado con éxito: ${file.name}`, 'system');
       }
     });
   }
 
+  // 3. Sincronización de Pickers de Color con Inputs Hexadecimales
+  const syncColor = (pickerId, hexId) => {
+    const picker = document.getElementById(pickerId);
+    const hex = document.getElementById(hexId);
 
-  // 2. Obtener lista de Native Plugins seleccionados (JS Bridge)
+    if (picker && hex) {
+      picker.addEventListener('input', (e) => hex.value = e.target.value.toUpperCase());
+      hex.addEventListener('input', (e) => {
+        if (/^#[0-9A-F]{6}$/i.test(e.target.value)) {
+          picker.value = e.target.value;
+        }
+      });
+    }
+  };
+
+  syncColor('statusBarColor', 'statusBarHex');
+  syncColor('navBarColor', 'navBarHex');
+
+  // 4. Obtener lista de Native Plugins seleccionados (JS Bridge)
   const getSelectedPlugins = () => {
-    const pluginCheckboxes = document.querySelectorAll('.cell.full-width input[type="checkbox"]');
+    const pluginCheckboxes = document.querySelectorAll('input[type="checkbox"]');
     const activePlugins = [];
 
     pluginCheckboxes.forEach(cb => {
@@ -110,11 +133,11 @@ document.addEventListener('DOMContentLoaded', () => {
     return activePlugins;
   };
 
-    // 3. Proceso de Compilación / Envió a la API
+  // 5. Proceso de Compilación / Envío a la API
   if (buildBtn) {
     buildBtn.addEventListener('click', async () => {
 
-      // Vibración de respuesta al tocar el botón (40 milisegundos)
+      // Respuesta háptica táctil al pulsar el botón
       if (navigator.vibrate) {
         navigator.vibrate(40);
       }
@@ -128,25 +151,30 @@ document.addEventListener('DOMContentLoaded', () => {
       buildBtn.disabled = true;
       buildBtn.style.opacity = '0.5';
 
-    
-
-            // Captura de valores de los inputs por sus IDs
+      // Captura de valores del formulario
       const appName = document.getElementById('appNameInput')?.value || 'Meow App';
       const packageId = document.getElementById('packageIdInput')?.value || 'com.meow.app';
       const versionName = document.getElementById('versionNameInput')?.value || '1.0.0';
       const buildNumber = document.getElementById('buildNumberInput')?.value || '1';
-      
+
       const orientationSelect = document.querySelectorAll('select')[0];
       const offlineSelect = document.querySelectorAll('select')[1];
       const orientation = orientationSelect ? orientationSelect.value : 'portrait';
       const isOffline = offlineSelect ? offlineSelect.value : 'true';
+
+      const statusBarColor = document.getElementById('statusBarHex')?.value || '#000000';
+      const statusBarIcons = document.getElementById('statusBarIcons')?.value || 'light';
+      const navBarColor = document.getElementById('navBarHex')?.value || '#000000';
+      const navBarIcons = document.getElementById('navBarIcons')?.value || 'light';
+
       const activePlugins = getSelectedPlugins();
 
       logMessage('Iniciando secuencia de compilación...', 'warn');
       logMessage(`Configuración: [App: ${appName}] | [ID: ${packageId}] | [v${versionName} (${buildNumber})]`, 'system');
+      logMessage(`System UI: Status Bar [${statusBarColor} / ${statusBarIcons}] | Nav Bar [${navBarColor} / ${navBarIcons}]`, 'system');
       logMessage(`JS Bridge Plugins activos: ${activePlugins.join(', ') || 'Ninguno'}`, 'system');
 
-      // Preparar FormData para la petición HTTP
+      // Preparar FormData para la petición HTTP a la API
       const formData = new FormData();
       formData.append('zipFile', fileInput.files[0]);
       formData.append('appName', appName);
@@ -155,25 +183,15 @@ document.addEventListener('DOMContentLoaded', () => {
       formData.append('buildNumber', buildNumber);
       formData.append('orientation', orientation);
       formData.append('offlineMode', isOffline);
+      formData.append('statusBarColor', statusBarColor);
+      formData.append('statusBarIcons', statusBarIcons);
+      formData.append('navBarColor', navBarColor);
+      formData.append('navBarIcons', navBarIcons);
       formData.append('plugins', JSON.stringify(activePlugins));
 
       if (iconInput && iconInput.files.length > 0) {
         formData.append('appIcon', iconInput.files[0]);
       }
-
-
-      logMessage('Iniciando secuencia de compilación...', 'warn');
-      logMessage(`Configuración: [App: ${appName}] | [ID: ${packageId}] | [Orientación: ${orientation}]`, 'system');
-      logMessage(`JS Bridge Plugins activos: ${activePlugins.join(', ') || 'Ninguno'}`, 'system');
-
-      // Preparar FormData para la petición HTTP
-      const formData = new FormData();
-      formData.append('zipFile', fileInput.files[0]);
-      formData.append('appName', appName);
-      formData.append('packageId', packageId);
-      formData.append('orientation', orientation);
-      formData.append('offlineMode', isOffline);
-      formData.append('plugins', JSON.stringify(activePlugins));
 
       try {
         logMessage('Enviando paquete .ZIP al servidor de compilación...', 'info');
@@ -202,15 +220,16 @@ document.addEventListener('DOMContentLoaded', () => {
         a.remove();
         */
 
-        // Simulación de respuesta de consola para pruebas en local / GitHub Pages
+        // Simulación de respuesta en consola para pruebas
         setTimeout(() => logMessage('Descomprimiendo estructura HTML5 y assets...', 'info'), 1000);
         setTimeout(() => logMessage('Inyectando contenedor nativo Android y JS Bridge...', 'info'), 2200);
-        setTimeout(() => logMessage('Generando y firmando paquete APK final...', 'info'), 3500);
+        setTimeout(() => logMessage('Configurando Status Bar y Navigation Bar...', 'info'), 3200);
+        setTimeout(() => logMessage('Generando y firmando paquete APK final...', 'info'), 4200);
         setTimeout(() => {
-          logMessage('¡Proceso completado! (Conecta la URL final de la API para iniciar la descarga automática).', 'system');
+          logMessage('¡Proceso completado! (Conecta el endpoint de la API final para iniciar la descarga automática).', 'system');
           buildBtn.disabled = false;
           buildBtn.style.opacity = '1';
-        }, 4500);
+        }, 5200);
 
       } catch (error) {
         logMessage(`Error en el proceso: ${error.message}`, 'error');
