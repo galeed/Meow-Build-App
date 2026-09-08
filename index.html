@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>App Layout A24 Style</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    body {
+      background-color: #000;
+      color: #fff;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      padding: 10px;
+    }
+
+    /* Contenedor principal estilo Grid con bordes */
+    .brutalist-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      border: 1px solid #333;
+    }
+
+    /* Cada celda o bloque */
+    .cell {
+      border: 1px solid #333;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    /* Celda que ocupa todo el ancho */
+    .full-width {
+      grid-column: span 2;
+    }
+
+    /* Tipografía brutalista */
+    h1 {
+      font-size: 2.2rem;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: -1px;
+    }
+
+    .subtext {
+      font-size: 0.85rem;
+      color: #aaa;
+      text-transform: uppercase;
+      line-height: 1.2;
+    }
+
+    /* Imágenes dentro de las celdas */
+    .cell img {
+      width: 100%;
+      height: auto;
+      margin-top: 10px;
+      display: block;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="brutalist-grid">
+    <!-- Encabezado superior -->
+    <div class="cell full-width">
+      <h1>UNIRSE AHORA &rarr;</h1>
+    </div>
+
+    <!-- Bloque de contenido 1 -->
+    <div class="cell">
+      <span class="subtext">VER EXCLUSIVOS EN LA TIENDA</span>
+      <img src="https://via.placeholder.com/300x200/111/fff?text=PRODUCTO" alt="Exclusivos">
+    </div>
+
+    <!-- Bloque de contenido 2 -->
+    <div class="cell">
+      <p class="subtext" style="color: #fff; font-size: 0.95rem;">
+        La membresía te da acceso a contenido exclusivo, lanzamientos limitados y descuentos.
+      </p>
+    </div>
+  </div>
+
+</body>
+</html>
