@@ -8,11 +8,49 @@ document.addEventListener('DOMContentLoaded', () => {
   const fileInput = document.getElementById('fileInput');
   const consoleLogs = document.getElementById('consoleLogs');
   const buildBtn = document.getElementById('buildBtn');
-
-  // Referencias para Carga de Icono
-  const iconDropZone = document.getElementById('iconDropZone');
+  
+    // Lógica para Carga de Icono
   const iconInput = document.getElementById('iconInput');
   const iconPreview = document.getElementById('iconPreview');
+
+  if (iconInput) {
+    iconInput.addEventListener('change', (e) => {
+      if (e.target.files.length > 0) {
+        const file = e.target.files[0];
+        const reader = new FileReader();
+
+        reader.onload = (event) => {
+          if (iconPreview) {
+            iconPreview.innerHTML = `<img src="${event.target.result}" style="width: 100%; height: 100%; object-fit: cover;">`;
+          }
+        };
+
+        reader.readAsDataURL(file);
+        logMessage(`Icono cargado con éxito: ${file.name}`, 'system');
+      }
+    });
+  }
+
+  // Toggle Pantalla Completa (Ocultar / Desactivar barras)
+  const fullscreenToggle = document.getElementById('fullscreenToggle');
+  const systemBarsContainer = document.getElementById('systemBarsContainer');
+
+  if (fullscreenToggle && systemBarsContainer) {
+    fullscreenToggle.addEventListener('change', (e) => {
+      if (e.target.checked) {
+        systemBarsContainer.style.opacity = '0.3';
+        systemBarsContainer.style.pointerEvents = 'none';
+        logMessage('Modo Pantalla Completa (Immersive) activado.', 'system');
+      } else {
+        systemBarsContainer.style.opacity = '1';
+        systemBarsContainer.style.pointerEvents = 'auto';
+        logMessage('Modo Pantalla Completa desactivado. Barras personalizadas activas.', 'system');
+      }
+    });
+  }
+
+
+  
 
   // Helper para escribir en la consola terminal
   const logMessage = (message, type = 'info') => {
