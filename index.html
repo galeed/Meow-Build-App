@@ -247,30 +247,9 @@
 
   </div>
 
-  <script>
-    // Evento para abrir selector de archivos al hacer clic en la dropzone
-    const dropZone = document.getElementById('dropZone');
-    const fileInput = document.getElementById('fileInput');
-    const consoleLogs = document.getElementById('consoleLogs');
-    const buildBtn = document.getElementById('buildBtn');
+<script src="./script.js"></script>
+</body>
 
-    dropZone.addEventListener('click', () => fileInput.click());
-
-    fileInput.addEventListener('change', (e) => {
-      if (e.target.files.length > 0) {
-        const file = e.target.files[0];
-        dropZone.querySelector('strong').innerText = file.name;
-        consoleLogs.innerHTML += `<br>> Archivo cargado: ${file.name} (${(file.size / 1024 / 1024).toFixed(2)} MB)`;
-      }
-    });
-
-    buildBtn.addEventListener('click', () => {
-      consoleLogs.innerHTML += `<br>> Descomprimiendo assets...`;
-      consoleLogs.innerHTML += `<br>> Generando contenedor Android...`;
-      consoleLogs.innerHTML += `<br>> Firmando paquete .APK...`;
-      consoleLogs.scrollTop = consoleLogs.scrollHeight;
-    });
-  </script>
 
 </body>
 </html>
