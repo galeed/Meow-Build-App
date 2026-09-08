@@ -217,24 +217,32 @@
       </label>
     </div>
 
-    <!-- Módulo 03: Configuración de Pantalla -->
-    <div class="cell full-width">
-      <span class="subtext">03 // PANTALLA</span>
-      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
-        <div>
-          <span class="subtext">ORIENTACIÓN</span>
-          <select id="orientationSelect" class="input-field">
-            <option value="portrait">VERTICAL (PORTRAIT)</option>
-            <option value="landscape">HORIZONTAL (LANDSCAPE)</option>
-          </select>
-        </div>
-        <div>
-          <span class="subtext">MODO OFFLINE</span>
-          <select id="offlineSelect" class="input-field">
-            <option value="true">ACTIVADO (EMBED)</option>
-            <option value="false">DESACTIVADO (REMOTE)</option>
-          </select>
-        </div>
+  <!-- Módulo 03: Configuración de Pantalla -->
+<div class="cell full-width">
+  <span class="subtext">03 // PANTALLA Y RED</span>
+  <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+    <div>
+      <span class="subtext">ORIENTACIÓN</span>
+      <select id="orientationSelect" class="input-field">
+        <option value="portrait">VERTICAL (PORTRAIT)</option>
+        <option value="landscape">HORIZONTAL (LANDSCAPE)</option>
+      </select>
+    </div>
+    <div>
+      <span class="subtext">MODO OFFLINE</span>
+      <select id="offlineSelect" class="input-field">
+        <option value="true">ACTIVADO</option>
+        <option value="false">DESACTIVADO</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- Nota explicativa -->
+  <p class="subtext" style="margin-top: 10px; margin-bottom: 0; color: #888888; text-transform: none; font-size: 0.68rem; line-height: 1.3;">
+    ⓘ <strong>Nota:</strong> <span style="color: #ffffff;">"Activado"</span> ejecuta la app localmente y permite conexiones a internet para descargar/guardar metadatos en caché. <span style="color: #ffffff;">"Desactivado"</span> bloquea el acceso a la red (sin conexiones externas).
+  </p>
+</div>
+
       </div>
     </div>
 
