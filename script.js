@@ -84,9 +84,15 @@ document.addEventListener('DOMContentLoaded', () => {
     return activePlugins;
   };
 
-  // 3. Proceso de Compilación / Envió a la API
+    // 3. Proceso de Compilación / Envió a la API
   if (buildBtn) {
     buildBtn.addEventListener('click', async () => {
+
+      // Vibración de respuesta al tocar el botón (40 milisegundos)
+      if (navigator.vibrate) {
+        navigator.vibrate(40);
+      }
+
       if (!fileInput.files || fileInput.files.length === 0) {
         logMessage('Error: No has seleccionado ningún proyecto .ZIP.', 'error');
         return;
@@ -95,6 +101,8 @@ document.addEventListener('DOMContentLoaded', () => {
       // Deshabilitar botón durante el proceso
       buildBtn.disabled = true;
       buildBtn.style.opacity = '0.5';
+
+    
 
       const appNameInput = document.querySelector('input[placeholder="Mi App Web"]');
       const packageIdInput = document.querySelector('input[placeholder="com.ejemplo.app"]');
