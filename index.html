@@ -154,6 +154,31 @@
       display: flex;
       justify-content: space-between;
     }
+    
+    /* Checkboxes estilo interfaz retro-industrial */
+.plugin-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: monospace;
+  font-size: 0.75rem;
+  border: 1px solid #ffffff;
+  padding: 10px;
+  cursor: pointer;
+  user-select: none;
+  transition: all 0.15s ease;
+}
+
+.plugin-label:has(input:checked) {
+  background-color: #ffffff;
+  color: #000000;
+  font-weight: bold;
+}
+
+.plugin-label input[type="checkbox"] {
+  display: none; /* Oculta el checkbox nativo para usar la celda completa */
+}
+
   </style>
 </head>
 <body>
