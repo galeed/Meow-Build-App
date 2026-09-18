@@ -267,10 +267,11 @@ const syncColor = (pickerId, hexId) => {
         setTimeout(() => logMessage('Configurando Status Bar y Navigation Bar...', 'info'), 3200);
         setTimeout(() => logMessage('Generando y firmando paquete APK final...', 'info'), 4200);
         setTimeout(() => {
-          logMessage('¡Proceso completado! (Conecta el endpoint final para la descarga automática).', 'system');
-          buildBtn.disabled = false;
-          buildBtn.style.opacity = '1';
-        }, 5200);
+  logMessage('¡Proceso completado con éxito! Paquete listo.', 'system');
+  buildBtn.disabled = false;
+  buildBtn.style.opacity = '1';
+}, 5200);
+
 
       } catch (error) {
         logMessage(`Error en el proceso: ${error.message}`, 'error');
