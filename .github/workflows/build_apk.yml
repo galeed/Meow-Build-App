@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: 1. Descargar Código Fuente del Repositorio
+      - name: 1. Descargar Código Fuente
         uses: actions/checkout@v4
 
       - name: 2. Configurar Entorno Java (JDK 17)
@@ -23,21 +23,104 @@ jobs:
       - name: 3. Configurar Android SDK
         uses: android-actions/setup-android@v3
 
-      - name: 4. Descomprimir Proyecto Web (.ZIP)
+      - name: 4. Generar Plantilla Android Automáticamente
         run: |
+          mkdir -p android-template/app/src/main/java/com/meow/app
           mkdir -p android-template/app/src/main/assets/www
-          rm -rf android-template/app/src/main/assets/www/*
+
+          # settings.gradle
+          cat << 'EOF' > android-template/settings.gradle
+          pluginManagement { repositories { google(); mavenCentral(); gradlePluginPortal() } }
+          dependencyResolutionManagement { repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS); repositories { google(); mavenCentral() } }
+          rootProject.name = "MeowBuildAndroid"
+          include ':app'
+          EOF
+
+          # build.gradle raíz
+          cat << 'EOF' > android-template/build.gradle
+          plugins { id 'com.android.application' version '8.2.2' apply false }
+          EOF
+
+          # app/build.gradle
+          cat << 'EOF' > android-template/app/build.gradle
+          plugins { id 'com.android.application' }
+          android {
+              namespace 'com.meow.app'
+              compileSdk 34
+              defaultConfig {
+                  applicationId "com.meow.app"
+                  minSdk 24
+                  targetSdk 34
+                  versionCode 1
+                  versionName "1.0.0"
+              }
+              compileOptions {
+                  sourceCompatibility JavaVersion.VERSION_17
+                  targetCompatibility JavaVersion.VERSION_17
+              }
+          }
+          dependencies {
+              implementation 'androidx.appcompat:appcompat:1.6.1'
+              implementation 'com.google.android.material:material:1.11.0'
+              implementation 'androidx.webkit:webkit:1.10.0'
+          }
+          EOF
+
+          # AndroidManifest.xml
+          cat << 'EOF' > android-template/app/src/main/AndroidManifest.xml
+          <?xml version="1.0" encoding="utf-8"?>
+          <manifest xmlns:android="http://schemas.android.com/apk/res/android">
+              <uses-permission android:name="android.permission.INTERNET" />
+              <uses-permission android:name="android.permission.VIBRATE" />
+              <application android:allowBackup="true" android:label="Meow App" android:theme="@style/Theme.AppCompat.NoActionBar">
+                  <activity android:name=".MainActivity" android:exported="true" android:configChanges="orientation|screenSize|keyboardHidden">
+                      <intent-filter>
+                          <action android:name="android.intent.action.MAIN" />
+                          <category android:name="android.intent.category.LAUNCHER" />
+                      </intent-filter>
+                  </activity>
+              </application>
+          </manifest>
+          EOF
+
+          # MainActivity.java
+          cat << 'EOF' > android-template/app/src/main/java/com/meow/app/MainActivity.java
+          package com.meow.app;
+          import android.os.Bundle;
+          import android.webkit.WebSettings;
+          import android.webkit.WebView;
+          import android.webkit.WebViewClient;
+          import androidx.appcompat.app.AppCompatActivity;
+
+          public class MainActivity extends AppCompatActivity {
+              private WebView webView;
+              @Override
+              protected void onCreate(Bundle savedInstanceState) {
+                  super.onCreate(savedInstanceState);
+                  webView = new WebView(this);
+                  setContentView(webView);
+                  WebSettings webSettings = webView.getSettings();
+                  webSettings.setJavaScriptEnabled(true);
+                  webSettings.setDomStorageEnabled(true);
+                  webSettings.setAllowFileAccess(true);
+                  webSettings.setAllowContentAccess(true);
+                  webView.setWebViewClient(new WebViewClient());
+                  webView.loadUrl("file:///android_asset/www/index.html");
+              }
+          }
+          EOF
+
+      - name: 5. Descomprimir Proyecto Web (.ZIP)
+        run: |
           unzip -o uploads/project.zip -d android-template/app/src/main/assets/www/
 
-      - name: 5. Compilar APK con Gradle
+      - name: 6. Compilar APK con Gradle
         run: |
           cd android-template
           gradle assembleDebug --no-daemon
 
-
-      - name: 6. Publicar APK Resultante
+      - name: 7. Publicar APK Resultante
         uses: actions/upload-artifact@v4
         with:
           name: App-Compilada-MeowBuild
           path: android-template/app/build/outputs/apk/debug/app-debug.apk
-
