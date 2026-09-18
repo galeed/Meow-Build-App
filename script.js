@@ -98,19 +98,24 @@ if (files.length > 0 && files[0].name.endsWith('.zip')) {
   }
 
   // 3. Sincronización de Pickers de Color
-  const syncColor = (pickerId, hexId) => {
-    const picker = document.getElementById(pickerId);
-    const hex = document.getElementById(hexId);
+  // Reemplazar la función syncColor en script.js
+const syncColor = (pickerId, hexId) => {
+  const picker = document.getElementById(pickerId);
+  const hex = document.getElementById(hexId);
 
-    if (picker && hex) {
-      picker.addEventListener('input', (e) => hex.value = e.target.value.toUpperCase());
-      hex.addEventListener('input', (e) => {
-        if (/^#[0-9A-F]{6}$/i.test(e.target.value)) {
-          picker.value = e.target.value;
-        }
-      });
-    }
-  };
+  if (picker && hex) {
+    picker.addEventListener('input', (e) => hex.value = e.target.value.toUpperCase());
+    hex.addEventListener('input', (e) => {
+      let val = e.target.value.trim();
+      if (val && !val.startsWith('#')) val = '#' + val;
+      
+      if (/^#[0-9A-F]{6}$/i.test(val)) {
+        picker.value = val;
+      }
+    });
+  }
+};
+
 
   syncColor('statusBarColor', 'statusBarHex');
   syncColor('navBarColor', 'navBarHex');
