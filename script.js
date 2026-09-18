@@ -7,277 +7,102 @@ document.addEventListener('DOMContentLoaded', () => {
   const dropZone = document.getElementById('dropZone');
   const fileInput = document.getElementById('fileInput');
   const consoleLogs = document.getElementById('consoleLogs');
-  const buildBtn = document.getElementById('buildBtn');
+// CONFIGURACIÓN DE TU REPOSITORIO DE GITHUB
+const GITHUB_USERNAME = "galeedx"; // Ejemplo: galeed
+const GITHUB_REPO = "meow-build-app";    // Ejemplo: meow-build-app
+const GITHUB_BRANCH = "master";                  // O 'master' según corresponda
 
-  // Referencias para Carga de Icono
-  const iconInput = document.getElementById('iconInput');
-  const iconPreview = document.getElementById('iconPreview');
+// TOKEN DE ACCESO (Personal Access Token con permisos de lectura/escritura en 'contents')
+// Para producción pública se recomienda usar una GitHub App o un proxy backend intermedio.
+const GITHUB_TOKEN = "ghp_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"; 
 
-  // Helper para escribir en la consola terminal
-  const logMessage = (message, type = 'info') => {
-    const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
-    let colorStyle = 'color: #00ff66;'; // Verde por defecto
+// Función helper para convertir archivos a Base64
+const fileToBase64 = (file) => new Promise((resolve, reject) => {
+  const reader = new FileReader();
+  reader.readAsDataURL(file);
+  reader.onload = () => resolve(reader.result.split(',')[1]);
+  reader.onerror = (error) => reject(error);
+});
 
-    if (type === 'error') colorStyle = 'color: #ff3333;';
-    if (type === 'warn')  colorStyle = 'color: #ffff00;';
-    if (type === 'system') colorStyle = 'color: #ffffff;';
+if (buildBtn) {
+  buildBtn.addEventListener('click', async (e) => {
+    e.preventDefault();
 
-    if (consoleLogs) {
-      consoleLogs.innerHTML += `<br><span style="${colorStyle}">[${time}] > ${message}</span>`;
-      consoleLogs.scrollTop = consoleLogs.scrollHeight;
+    if (!fileInput.files || fileInput.files.length === 0) {
+      logMessage('Error: No has seleccionado ningún archivo .ZIP.', 'error');
+      return;
     }
-  };
 
-  // 1. Manejo de Selección y Arrastre de Archivos (.ZIP)
+    if (consoleLogs) consoleLogs.innerHTML = '';
 
+    buildBtn.disabled = true;
+    buildBtn.style.opacity = '0.5';
 
-  if (dropZone && fileInput) {
-    dropZone.addEventListener('click', () => fileInput.click());
+    try {
+      const zipFile = fileInput.files[0];
+      logMessage(`Lectura de paquete local: ${zipFile.name}...`, 'info');
 
-    ['dragenter', 'dragover'].forEach(eventName => {
-      dropZone.addEventListener(eventName, (e) => {
-        e.preventDefault();
-        dropZone.classList.add('active');
-      }, false);
-    });
+      // 1. Convertir .ZIP a Base64
+      const base64Content = await fileToBase64(zipFile);
+      logMessage('Archivo convertido con éxito. Preparando envío a la API de GitHub...', 'info');
 
-    ['dragleave', 'drop'].forEach(eventName => {
-      dropZone.addEventListener(eventName, (e) => {
-        e.preventDefault();
-        dropZone.classList.remove('active');
-      }, false);
-    });
-
-    dropZone.addEventListener('drop', (e) => {
-      const dt = e.dataTransfer;
-      const files = dt.files;
-
-
-if (files.length > 0 && files[0].name.endsWith('.zip')) {
-  const dtTransfer = new DataTransfer();
-  dtTransfer.items.add(files[0]);
-  fileInput.files = dtTransfer.files;
-  handleFileSelect(files[0]);
-}
-
-    });
-
-    fileInput.addEventListener('change', (e) => {
-      if (e.target.files.length > 0) {
-        handleFileSelect(e.target.files[0]);
-      }
-    });
-  }
-
-  function handleFileSelect(file) {
-    const dropZoneText = dropZone.querySelector('strong');
-    if (dropZoneText) {
-      dropZoneText.innerText = file.name;
-    }
-    const sizeMB = (file.size / (1024 * 1024)).toFixed(2);
-    logMessage(`Archivo ZIP cargado con éxito: ${file.name} (${sizeMB} MB)`, 'system');
-  }
-
-  // 2. Manejo de Carga de Icono (.PNG / .JPG)
-  if (iconInput) {
-    iconInput.addEventListener('change', (e) => {
-      if (e.target.files.length > 0) {
-        const file = e.target.files[0];
-        const reader = new FileReader();
-
-        reader.onload = (event) => {
-          if (iconPreview) {
-            iconPreview.innerHTML = `<img src="${event.target.result}" style="width: 100%; height: 100%; object-fit: cover;">`;
-          }
-        };
-
-        reader.readAsDataURL(file);
-        logMessage(`Icono cargado con éxito: ${file.name}`, 'system');
-      }
-    });
-  }
-
-  // 3. Sincronización de Pickers de Color
-  // Reemplazar la función syncColor en script.js
-const syncColor = (pickerId, hexId) => {
-  const picker = document.getElementById(pickerId);
-  const hex = document.getElementById(hexId);
-
-  if (picker && hex) {
-    picker.addEventListener('input', (e) => hex.value = e.target.value.toUpperCase());
-    hex.addEventListener('input', (e) => {
-      let val = e.target.value.trim();
-      if (val && !val.startsWith('#')) val = '#' + val;
+      // 2. Obtener el SHA del archivo previo en uploads/project.zip (si existe) para poder sobrescribirlo
+      let sha = '';
+      const getFileUrl = `https://api.github.com/repos/${GITHUB_USERNAME}/${GITHUB_REPO}/contents/uploads/project.zip?ref=${GITHUB_BRANCH}`;
       
-      if (/^#[0-9A-F]{6}$/i.test(val)) {
-        picker.value = val;
-      }
-    });
-  }
-};
-
-
-  syncColor('statusBarColor', 'statusBarHex');
-  syncColor('navBarColor', 'navBarHex');
-
-  // Toggle Pantalla Completa (Immersive)
-  const fullscreenToggle = document.getElementById('fullscreenToggle');
-  const systemBarsContainer = document.getElementById('systemBarsContainer');
-
-  if (fullscreenToggle && systemBarsContainer) {
-    fullscreenToggle.addEventListener('change', (e) => {
-      if (e.target.checked) {
-        systemBarsContainer.style.opacity = '0.3';
-        systemBarsContainer.style.pointerEvents = 'none';
-        logMessage('Modo Pantalla Completa (Immersive) activado.', 'system');
-      } else {
-        systemBarsContainer.style.opacity = '1';
-        systemBarsContainer.style.pointerEvents = 'auto';
-        logMessage('Modo Pantalla Completa desactivado. Barras personalizadas activas.', 'system');
-      }
-    });
-  }
-
-  // 4. Obtener lista de Native Plugins seleccionados
-  const getSelectedPlugins = () => {
-    const pluginCheckboxes = document.querySelectorAll('.cell.full-width input[type="checkbox"]:not(#fullscreenToggle)');
-    const activePlugins = [];
-
-    pluginCheckboxes.forEach(cb => {
-      if (cb.checked) {
-        const labelText = cb.parentElement.textContent.trim();
-        activePlugins.push(labelText);
-      }
-    });
-
-    return activePlugins;
-  };
-
-  // 5. Proceso de Compilación / Envío a la API
-    // 5. Proceso de Compilación / Envío a la API
-  if (buildBtn) {
-    buildBtn.addEventListener('click', async (e) => {
-      e.preventDefault(); // <--- EVITA QUE LA PÁGINA SE RECARGUE
-
-      if (!fileInput.files || fileInput.files.length === 0) {
-        logMessage('Error: No has seleccionado ningún proyecto .ZIP.', 'error');
-        return;
-      }
-
-      // Limpia la consola previa para empezar desde cero
-      if (consoleLogs) {
-        consoleLogs.innerHTML = '';
-      }
-
-      if (navigator.vibrate) {
-        navigator.vibrate(40);
-      }
-
-      buildBtn.disabled = true;
-      buildBtn.style.opacity = '0.5';
-
-  
-
-
-      // Captura de datos
-      const appName = document.getElementById('appNameInput')?.value || 'Meow App';
-      const packageId = document.getElementById('packageIdInput')?.value || 'com.meow.app';
-      const versionName = document.getElementById('versionNameInput')?.value || '1.0.0';
-      const buildNumber = document.getElementById('buildNumberInput')?.value || '1';
-
-      const orientation = document.getElementById('orientationSelect')?.value || 'portrait';
-      
-      // Control Modo Offline y Permisos de Red
-      const isOfflineMode = document.getElementById('offlineSelect')?.value === 'true';
-
-      const isFullscreen = document.getElementById('fullscreenToggle')?.checked;
-      const statusBarIcons = document.getElementById('statusBarIcons')?.value;
-      const navBarIcons = document.getElementById('navBarIcons')?.value;
-
-      const activePlugins = getSelectedPlugins();
-
-      logMessage('Iniciando secuencia de compilación...', 'warn');
-      logMessage(`Configuración: [App: ${appName}] | [ID: ${packageId}] | [v${versionName} (${buildNumber})]`, 'system');
-
-      // Preparar FormData
-      const formData = new FormData();
-      formData.append('zipFile', fileInput.files[0]);
-      formData.append('appName', appName);
-      formData.append('packageId', packageId);
-      formData.append('versionName', versionName);
-      formData.append('buildNumber', buildNumber);
-      formData.append('orientation', orientation);
-
-      // Si el modo offline está ACTIVADO, se otorgan permisos de Internet para caché y peticiones externas.
-      formData.append('offlineMode', isOfflineMode ? 'true' : 'false');
-      formData.append('internetPermission', isOfflineMode ? 'true' : 'false');
-
-      formData.append('fullscreenMode', isFullscreen ? 'true' : 'false');
-
-      // Manejo de barras según la elección de Immersive / Default
-      if (isFullscreen || statusBarIcons === 'none') {
-        formData.append('statusBarColor', 'default');
-        formData.append('statusBarIcons', 'default');
-      } else {
-        formData.append('statusBarColor', document.getElementById('statusBarHex')?.value || '#000000');
-        formData.append('statusBarIcons', statusBarIcons);
-      }
-
-      if (isFullscreen || navBarIcons === 'none') {
-        formData.append('navBarColor', 'default');
-        formData.append('navBarIcons', 'default');
-      } else {
-        formData.append('navBarColor', document.getElementById('navBarHex')?.value || '#000000');
-        formData.append('navBarIcons', navBarIcons);
-      }
-
-      formData.append('plugins', JSON.stringify(activePlugins));
-
-      if (iconInput && iconInput.files.length > 0) {
-        formData.append('appIcon', iconInput.files[0]);
-      }
-
       try {
-        logMessage('Enviando paquete .ZIP al servidor de compilación...', 'info');
-
-
-        const response = await fetch('https://api.tu-servicio-empaquetador.dev/v1/build', {
-          method: 'POST',
-          body: formData
+        const getRes = await fetch(getFileUrl, {
+          headers: { 'Authorization': `token ${GITHUB_TOKEN}` }
         });
-
-        if (!response.ok) throw new Error('Falló la respuesta del servidor de compilación.');
-
-        const blob = await response.blob();
-        const downloadUrl = window.URL.createObjectURL(blob);
-        
-        logMessage('¡Compilación exitosa! Descargando APK...', 'info');
-        
-        const a = document.createElement('a');
-        a.href = downloadUrl;
-        a.download = `${appName.toLowerCase().replace(/\s+/g, '-')}-release.apk`;
-        document.body.appendChild(a);
-        a.click();
-        a.remove();
-        */
-
-
-        setTimeout(() => logMessage('Descomprimiendo estructura HTML5 y assets...', 'info'), 1000);
-        setTimeout(() => logMessage('Inyectando contenedor nativo Android y JS Bridge...', 'info'), 2200);
-        setTimeout(() => logMessage('Configurando Status Bar y Navigation Bar...', 'info'), 3200);
-        setTimeout(() => logMessage('Generando y firmando paquete APK final...', 'info'), 4200);
-        setTimeout(() => {
-  logMessage('¡Proceso completado con éxito! Paquete listo.', 'system');
-  buildBtn.disabled = false;
-  buildBtn.style.opacity = '1';
-}, 5200);
-
-
-      } catch (error) {
-        logMessage(`Error en el proceso: ${error.message}`, 'error');
-        buildBtn.disabled = false;
-        buildBtn.style.opacity = '1';
+        if (getRes.ok) {
+          const fileData = await getRes.json();
+          sha = fileData.sha;
+        }
+      } catch (err) {
+        logMessage('Creando nueva sesión de compilación...', 'system');
       }
-    });
-  }
+
+      // 3. Subir/Sobrescribir el .ZIP en el repositorio
+      const putFileUrl = `https://api.github.com/repos/${GITHUB_USERNAME}/${GITHUB_REPO}/contents/uploads/project.zip`;
+      const bodyPayload = {
+        message: `Compilación solicitada desde MEOW BUILD - ${new Date().toISOString()}`,
+        content: base64Content,
+        branch: GITHUB_BRANCH
+      };
+
+      if (sha) bodyPayload.sha = sha;
+
+      logMessage('Enviando paquete al servidor de compilación en la nube...', 'warn');
+
+      const uploadRes = await fetch(putFileUrl, {
+        method: 'PUT',
+        headers: {
+          'Authorization': `token ${GITHUB_TOKEN}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(bodyPayload)
+      });
+
+      if (!uploadRes.ok) {
+        throw new Error(`Error en el envío API (HTTP ${uploadRes.status})`);
+      }
+
+      logMessage('¡Paquete subido con éxito!', 'info');
+      logMessage('Iniciando entorno de compilación en GitHub Actions...', 'system');
+      logMessage('Procesando Android SDK, Java 17 y Gradle...', 'info');
+      
+      // Enlace donde el usuario puede ver la compilación en vivo y descargar el APK
+      const actionsUrl = `https://github.com/${GITHUB_USERNAME}/${GITHUB_REPO}/actions`;
+      
+      logMessage(`> [✓] ¡Proceso iniciado! Puedes ver el progreso y descargar tu APK en:`, 'system');
+      logMessage(`<a href="${actionsUrl}" target="_blank" style="color: #00ff66; text-decoration: underline;">VER Y DESCARGAR APK EN GITHUB ACTIONS &rarr;</a>`, 'info');
+
+    } catch (error) {
+      logMessage(`Error durante la compilación: ${error.message}`, 'error');
+    } finally {
+      buildBtn.disabled = false;
+      buildBtn.style.opacity = '1';
+    }
+  });
+}  }
 });
