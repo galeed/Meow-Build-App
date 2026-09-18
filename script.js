@@ -9,7 +9,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // ----------------------------------------
   const GITHUB_USERNAME = "galeedx"; // Ejemplo: galeed
   const GITHUB_REPO = "meow-build-app"; // Ejemplo: meow-build-app
-  const GITHUB_BRANCH = "master"; // O 'master'
+  const GITHUB_BRANCH = "main"; // O 'master'
   const GITHUB_TOKEN = "ghp_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"; // Token Personal de GitHub con permiso 'contents'
 
   // Elementos del DOM
