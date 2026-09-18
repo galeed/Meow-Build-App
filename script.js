@@ -29,6 +29,8 @@ document.addEventListener('DOMContentLoaded', () => {
   };
 
   // 1. Manejo de Selección y Arrastre de Archivos (.ZIP)
+
+
   if (dropZone && fileInput) {
     dropZone.addEventListener('click', () => fileInput.click());
 
@@ -50,12 +52,14 @@ document.addEventListener('DOMContentLoaded', () => {
       const dt = e.dataTransfer;
       const files = dt.files;
 
-      if (files.length > 0 && files[0].name.endsWith('.zip')) {
-        fileInput.files = files;
-        handleFileSelect(files[0]);
-      } else {
-        logMessage('Error: Por favor selecciona un archivo con formato .ZIP válido.', 'error');
-      }
+
+if (files.length > 0 && files[0].name.endsWith('.zip')) {
+  const dtTransfer = new DataTransfer();
+  dtTransfer.items.add(files[0]);
+  fileInput.files = dtTransfer.files;
+  handleFileSelect(files[0]);
+}
+
     });
 
     fileInput.addEventListener('change', (e) => {
