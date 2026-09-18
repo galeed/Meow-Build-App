@@ -32,8 +32,8 @@ jobs:
       - name: 5. Compilar APK con Gradle
         run: |
           cd android-template
-          chmod +x gradlew
-          ./gradlew assembleDebug --no-daemon
+          gradle assembleDebug --no-daemon
+
 
       - name: 6. Publicar APK Resultante
         uses: actions/upload-artifact@v4
