@@ -127,6 +127,14 @@
     .plugin-label input[type="checkbox"] {
       display: none;
     }
+    
+    .plugin-label::before {
+    content: "[ ] ";
+    }
+    .plugin-label:has(input:checked)::before {
+    content: "[✓] ";
+    }
+
 
     /* Consola Terminal */
     .console-logs {
@@ -297,9 +305,10 @@
       <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 8px; margin-top: 6px;">
         
         <label class="plugin-label">
-          <input type="checkbox" checked>
-          [✓] VIBRATION API
-        </label>
+  <input type="checkbox" checked>
+  VIBRATION API
+</label>
+
 
         <label class="plugin-label">
           <input type="checkbox" checked>
