@@ -7,11 +7,12 @@ document.addEventListener('DOMContentLoaded', () => {
   // ----------------------------------------
   // 1. CONFIGURACIÓN DE TU REPOSITORIO DE GITHUB
   // ----------------------------------------
-  const GITHUB_USERNAME = "galeedx"; // Ejemplo: galeed
-  const GITHUB_REPO = "meow-build-app"; // Ejemplo: meow-build-app
-  const GITHUB_BRANCH = "main"; // O 'master'
-  const GITHUB_TOKEN = "ghp_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"; // Token Personal de GitHub con permiso 'contents'
+  const GITHUB_USERNAME = "galeedx";
+const GITHUB_REPO = "Meow-Build-App";
+const GITHUB_BRANCH = "main";
+const GITHUB_TOKEN = "ghp_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";
 
+  
   // Elementos del DOM
   const dropZone = document.getElementById('dropZone');
   const fileInput = document.getElementById('fileInput');
