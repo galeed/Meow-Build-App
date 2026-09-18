@@ -7,7 +7,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // ----------------------------------------
   // 1. CONFIGURACIÓN DE TU REPOSITORIO DE GITHUB
   // ----------------------------------------
-  const GITHUB_USERNAME = "galeedx";
+  const GITHUB_USERNAME = "galeed";
 const GITHUB_REPO = "Meow-Build-App";
 const GITHUB_BRANCH = "main";
 const GITHUB_TOKEN = "ghp_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";
