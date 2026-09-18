@@ -154,20 +154,30 @@ const syncColor = (pickerId, hexId) => {
   };
 
   // 5. Proceso de Compilación / Envío a la API
+    // 5. Proceso de Compilación / Envío a la API
   if (buildBtn) {
-    buildBtn.addEventListener('click', async () => {
-
-      if (navigator.vibrate) {
-        navigator.vibrate(40);
-      }
+    buildBtn.addEventListener('click', async (e) => {
+      e.preventDefault(); // <--- EVITA QUE LA PÁGINA SE RECARGUE
 
       if (!fileInput.files || fileInput.files.length === 0) {
         logMessage('Error: No has seleccionado ningún proyecto .ZIP.', 'error');
         return;
       }
 
+      // Limpia la consola previa para empezar desde cero
+      if (consoleLogs) {
+        consoleLogs.innerHTML = '';
+      }
+
+      if (navigator.vibrate) {
+        navigator.vibrate(40);
+      }
+
       buildBtn.disabled = true;
       buildBtn.style.opacity = '0.5';
+
+  
+
 
       // Captura de datos
       const appName = document.getElementById('appNameInput')?.value || 'Meow App';
@@ -230,8 +240,7 @@ const syncColor = (pickerId, hexId) => {
       try {
         logMessage('Enviando paquete .ZIP al servidor de compilación...', 'info');
 
-        /* 
-        // CONEXIÓN REAL CON LA API DE COMPILACIÓN
+
         const response = await fetch('https://api.tu-servicio-empaquetador.dev/v1/build', {
           method: 'POST',
           body: formData
@@ -252,7 +261,7 @@ const syncColor = (pickerId, hexId) => {
         a.remove();
         */
 
-        // Simulación de consola
+
         setTimeout(() => logMessage('Descomprimiendo estructura HTML5 y assets...', 'info'), 1000);
         setTimeout(() => logMessage('Inyectando contenedor nativo Android y JS Bridge...', 'info'), 2200);
         setTimeout(() => logMessage('Configurando Status Bar y Navigation Bar...', 'info'), 3200);
