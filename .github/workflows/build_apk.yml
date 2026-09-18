@@ -1,0 +1,42 @@
+name: Compilador Nativo MEOW BUILD
+
+on:
+  push:
+    paths:
+      - 'uploads/project.zip'
+  workflow_dispatch:
+
+jobs:
+  build-android:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: 1. Descargar Código Fuente del Repositorio
+        uses: actions/checkout@v4
+
+      - name: 2. Configurar Entorno Java (JDK 17)
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      - name: 3. Configurar Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: 4. Descomprimir Proyecto Web (.ZIP) en Assets Nativos
+        run: |
+          mkdir -p android-template/app/src/main/assets/www
+          rm -rf android-template/app/src/main/assets/www/*
+          unzip -o uploads/project.zip -d android-template/app/src/main/assets/www/
+
+      - name: 5. Compilar Binario APK con Gradle
+        run: |
+          cd android-template
+          chmod +x gradlew
+          ./gradlew assembleDebug --no-daemon
+
+      - name: 6. Publicar APK Resultante como Artefacto Descargable
+        uses: actions/upload-artifact@v4
+        with:
+          name: App-Compilada-MeowBuild
+          path: android-template/app/build/outputs/apk/debug/app-debug.apk
